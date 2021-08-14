@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name="shop_items")
@@ -34,4 +35,7 @@ public class ShopItems {
     @ManyToOne(fetch = FetchType.EAGER)
     private Brands brand;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Categories> categories;
+    
 }

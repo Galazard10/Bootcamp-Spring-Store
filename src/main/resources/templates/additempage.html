@@ -15,6 +15,10 @@
               </div>
             </div>
             <form th:action="@{'/additem'}" method="post">
+              <label class="mt-2">Item Brand:</label>
+              <select class="form-select form-control" name="itemBrand">
+                <option th:each="br: ${brands}" th:text="${br.name + ' - ' + br.country}" th:value="${br.id}"></option>
+              </select>
               <label class="mt-2">Item name:</label>
               <input type="text" class="form-control" name="itemName" required>
               <label class="mt-2">Item Description:</label>

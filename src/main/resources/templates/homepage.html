@@ -9,10 +9,10 @@
         <div class="row row-cols-1 row-cols-md-3 g-4">
             <div class="col" th:each="i: ${shopItems}">
                 <div class="card text-dark bg-light text-center mt-4" style="max-width: 23rem;">
-                    <div class="card-header text-center" style="font-size: 25px" th:text="${i.name}"></div>
+                    <div class="card-header text-center" style="font-size: 25px" th:text="${i.brand.name + ' ' + i.name}"></div>
                     <div class="card-body text-center">
                         <img th:src="${i.img_url}" style="height: 300px; width: 350px; object-fit: contain; object-position:center; background-position: center">
-                        <h5 class="card-title text-center text-success mt-2" style="font-size: 25px" th:text="'$' + ${i.price}"></h5>
+                        <h5 class="card-title text-center text-success mt-2" style=" font-size: 25px" th:text="'$' + ${i.price}"></h5>
                         <p class="card-text text-center" th:text="${i.description}"></p>
                         <a class="btn btn-primary form-control" th:href="@{'/details/' + ${i.id}}">Details</a>
                     </div>

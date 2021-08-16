@@ -7,6 +7,7 @@ import kz.bootcamp.springBoot.SpringBoot.entities.ShopItems;
 import kz.bootcamp.springBoot.SpringBoot.repositories.ShopItemsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -148,4 +149,21 @@ public class HomeController {
         }
         return "redirect:/";
     }
+
+    @GetMapping(value="/loginpage")
+    private String loginpage(Model model){
+        return "loginpage";
+    }
+
+    @GetMapping(value="/profilepage")
+    @PreAuthorize("isAuthenticated()")
+    private String profilepage(Model model){
+        return "profilepage";
+    }
+
+    @GetMapping(value="/accessdeniedpage")
+    private String accessDeniedPage(Model model){
+        return "403";
+    }
+
 }

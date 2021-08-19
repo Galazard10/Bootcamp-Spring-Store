@@ -4,10 +4,14 @@ import kz.bootcamp.springBoot.SpringBoot.beans.DatabaseBean;
 import kz.bootcamp.springBoot.SpringBoot.entities.Brands;
 import kz.bootcamp.springBoot.SpringBoot.entities.Categories;
 import kz.bootcamp.springBoot.SpringBoot.entities.ShopItems;
+import kz.bootcamp.springBoot.SpringBoot.entities.Users;
 import kz.bootcamp.springBoot.SpringBoot.repositories.ShopItemsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,17 +33,21 @@ public class HomeController {
     public String homepage(Model model){
         List<ShopItems> shopItems = databaseBean.getAllShopItems();
         model.addAttribute("shopItems", shopItems);
+        model.addAttribute("CURRENT_USER", getCurrentUser());
         return "homepage";
     }
 
     @GetMapping(value="/additem")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public String additempage(Model model){
         List<Brands> brands = databaseBean.getAllBrands();
         model.addAttribute("brands", brands);
+        model.addAttribute("CURRENT_USER", getCurrentUser());
         return "additempage";
     }
 
     @PostMapping(value="/additem")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public String toadditem(@RequestParam("itemName") String name,
                             @RequestParam("itemDesc") String description,
                             @RequestParam("itemPrice") double price,
@@ -69,16 +77,19 @@ public class HomeController {
         List<Categories> categories = databaseBean.getAllCategories();
         categories.removeAll(item.getCategories());
         model.addAttribute("categories", categories);
+        model.addAttribute("CURRENT_USER", getCurrentUser());
         return "detailspage";
     }
 
     @PostMapping(value="/deleteitem")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public String delete(@RequestParam(name = "itemId") Long id){
         databaseBean.deleteShopItem(id);
         return "redirect:/";
     }
 
     @PostMapping(value="/saveitem")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public String save(@RequestParam(name = "itemId") Long id,
                        @RequestParam(name = "itemName") String name,
                        @RequestParam(name = "itemDesc") String desc,
@@ -103,6 +114,7 @@ public class HomeController {
     }
 
     @PostMapping(value="/assigncategory")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public String assignCategory(@RequestParam(name="itemId") Long itemId,
                                  @RequestParam(name="categoryId") Long catId){
         Categories category = databaseBean.getCategoryById(catId);
@@ -127,6 +139,7 @@ public class HomeController {
     }
 
     @PostMapping(value="/removecategory")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')")
     public String removeCategory(@RequestParam(name="itemId") Long itemId,
                                  @RequestParam(name="categoryId") Long catId){
         Categories category = databaseBean.getCategoryById(catId);
@@ -151,19 +164,32 @@ public class HomeController {
     }
 
     @GetMapping(value="/loginpage")
-    private String loginpage(Model model){
+    public String loginpage(Model model){
+        model.addAttribute("CURRENT_USER", getCurrentUser());
         return "loginpage";
     }
 
     @GetMapping(value="/profilepage")
     @PreAuthorize("isAuthenticated()")
-    private String profilepage(Model model){
+    public String profilepage(Model model){
+        model.addAttribute("CURRENT_USER", getCurrentUser());
         return "profilepage";
     }
 
     @GetMapping(value="/accessdeniedpage")
-    private String accessDeniedPage(Model model){
+    public String accessDeniedPage(Model model){
+        model.addAttribute("CURRENT_USER", getCurrentUser());
         return "403";
+    }
+
+    private Users getCurrentUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(!(authentication instanceof AnonymousAuthenticationToken)){
+            Users user = (Users) authentication.getPrincipal();
+            return user;
+        }else {
+            return null;
+        }
     }
 
 }

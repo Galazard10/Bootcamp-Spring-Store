@@ -6,12 +6,14 @@ import kz.bootcamp.springBoot.SpringBoot.entities.Categories;
 import kz.bootcamp.springBoot.SpringBoot.entities.ShopItems;
 import kz.bootcamp.springBoot.SpringBoot.entities.Users;
 import kz.bootcamp.springBoot.SpringBoot.repositories.ShopItemsRepository;
+import kz.bootcamp.springBoot.SpringBoot.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,12 @@ public class HomeController {
     @Autowired
     @Qualifier("dbBean")
     private DatabaseBean databaseBean;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping(value="/")
     public String homepage(Model model){
@@ -169,11 +177,68 @@ public class HomeController {
         return "loginpage";
     }
 
+    @GetMapping(value="/registerpage")
+    public String registerPage(Model model){
+        model.addAttribute("CURRENT_USER", getCurrentUser());
+        return "registerpage";
+    }
+
+    @PostMapping(value="/toregister")
+    public String toRegister(@RequestParam(name = "email") String email,
+                             @RequestParam(name = "password") String pass,
+                             @RequestParam(name = "re_password") String repass,
+                             @RequestParam(name = "full_name") String full_name){
+        if(pass.length() >= 8) {
+            if (pass.equals(repass)) {
+                Users user = new Users();
+                user.setEmail(email);
+                user.setPassword(passwordEncoder.encode(pass));
+                user.setFull_name(full_name);
+
+                if (userService.addUser(user) != null) {
+                    return "redirect:/registerpage?success";
+                }
+                return "redirect:/registerpage?emailerror";
+            }
+            return "redirect:/registerpage?passworderror";
+        }
+        return "redirect:/registerpage?passsizeerror";
+    }
+
     @GetMapping(value="/profilepage")
     @PreAuthorize("isAuthenticated()")
     public String profilepage(Model model){
         model.addAttribute("CURRENT_USER", getCurrentUser());
         return "profilepage";
+    }
+
+    @PostMapping(value="/updatepassword")
+    @PreAuthorize("isAuthenticated()")
+    public String updatePassword(@RequestParam(name="old_password") String oldPass,
+                                 @RequestParam(name="new_password") String newPass,
+                                 @RequestParam(name="re_password") String rePass){
+        if(newPass.length() >= 8) {
+            if (newPass.equals(rePass)) {
+                Users user = getCurrentUser();
+                if(passwordEncoder.matches(oldPass, user.getPassword())){
+                    user.setPassword(passwordEncoder.encode(newPass));
+                    userService.updateUser(user);
+                    return "redirect:/profilepage?success";
+                }
+                return "redirect:/profilepage?oldpasserror";
+            }
+            return "redirect:/profilepage?passworderror";
+        }
+        return "redirect:/profilepage?passsizeerror";
+    }
+
+    @PostMapping(value="/updatename")
+    @PreAuthorize("isAuthenticated()")
+    public String updateName(@RequestParam(name = "full_name") String full_name){
+        Users user = getCurrentUser();
+        user.setFull_name(full_name);
+        userService.updateUser(user);
+        return "redirect:/profilepage?namesuccess";
     }
 
     @GetMapping(value="/accessdeniedpage")

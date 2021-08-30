@@ -6,29 +6,28 @@
         <div class="row d-flex justify-content-around">
           <div class="col-6 mx-auto">
             <div class="text-center">
-                <h3 class="text-info">Add New Item</h3>
+                <h3 class="text-info" th:text="#{additempage.text}"></h3>
             </div>
             <div th:if="${param.success!=null}">
-              <div class="alert alert-primary alert-dismissible fade show mt-3" role="alert">
-                Item added successfully!
+              <div class="alert alert-primary alert-dismissible fade show mt-3" role="alert" th:text="#{additempage.alert.success}">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>
             </div>
             <form th:action="@{'/additem'}" method="post">
-              <label class="mt-2">Item Brand:</label>
+              <label class="mt-2" th:text="#{additempage.item.brand}"></label>
               <select class="form-select form-control" name="itemBrand">
                 <option th:each="br: ${brands}" th:text="${br.name + ' - ' + br.country}" th:value="${br.id}"></option>
               </select>
-              <label class="mt-2">Item name:</label>
+              <label class="mt-2" th:text="#{additempage.item.name}"></label>
               <input type="text" class="form-control" name="itemName" required>
-              <label class="mt-2">Item Description:</label>
+              <label class="mt-2" th:text="#{additempage.item.description}"></label>
               <textarea type="text" class="form-control" name="itemDesc" required></textarea>
-              <label class="mt-2">Item Price:</label>
+              <label class="mt-2" th:text="#{additempage.item.price}"></label>
               <div class="input-group">
                 <span class="input-group-text">$</span>
                 <input type="text" class="form-control" name="itemPrice" required>
               </div>
-              <label class="mt-2">Item Image URL:</label>
+              <label class="mt-2" th:text="#{additempage.item.url}"></label>
               <input type="text" class="form-control" name="itemImgUrl" required>
               <button class="btn btn-success mt-2">Add Item</button>
             </form>

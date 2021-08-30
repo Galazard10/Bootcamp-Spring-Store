@@ -82,19 +82,19 @@
                 </div>
             </div>
             <div class="col-6 mt-5" sec:authorize="!hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')">
-                <label class="mt-2">Item Brand:</label>
+                <label class="mt-2" th:text="#{detailspage.item.brand}"></label>
                 <input type="text" th:value="${shopItem.brand.name}" class="form-control mt-2" readonly>
-                <label class="mt-2">Item Name:</label>
+                <label class="mt-2" th:text="#{detailspage.item.name}"></label>
                 <input type="text" class="form-control mt-2" name="itemName" th:value="${shopItem.name}" readonly>
-                <label class="mt-2">Item Description:</label>
+                <label class="mt-2" th:text="#{detailspage.item.description}"></label>
                 <textarea type="text" class="form-control mt-2" name="itemDesc"
                           th:text="${shopItem.description}" readonly></textarea>
-                <label class="mt-2">Item Price:</label>
+                <label class="mt-2" th:text="#{detailspage.item.price}"></label>
                 <div class="input-group mt-2">
                     <span class="input-group-text">$</span>
                     <input type="text" class="form-control" name="itemPrice" th:value="${shopItem.price}" readonly>
                 </div>
-                <label class="mt-2">Categories:</label>
+                <label class="mt-2" th:text="#{detailspage.item.categories}"></label>
                 <table class="table table-striped table-sm mt-2">
                     <tr th:each="cat: ${shopItem.categories}">
                         <td th:text="${cat.name + ' - ' + cat.code}"></td>

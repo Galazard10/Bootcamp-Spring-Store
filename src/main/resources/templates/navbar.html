@@ -3,20 +3,6 @@
         <a class="navbar-brand text-success" th:href="@{'/'}"><b>BITLAB SHOP</b></a>
         <div class="float-end">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0" sec:authorize="isAuthenticated()">
-                <li class="nav-item">
-                  <a class="nav-link" th:href="@{'/profilepage'}" th:text="${CURRENT_USER.full_name}"></a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" th:href="@{'/additem'}" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')">Add Item</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="JavaScript:void(0)" onclick="logout()">Log Out</a>
-                </li>
-                <script type="text/javascript">
-                    function logout(){
-                        document.getElementById("logoutFormId").submit();
-                    }
-                </script>
                 <div class="dropdown bg-light nav-item">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" th:text="#{menu.lang}">
                     </a>
@@ -25,10 +11,32 @@
                         <li><a class="dropdown-item" th:href="@{'?lng=ru'}">РУС</a></li>
                     </ul>
                 </div>
+                <li class="nav-item">
+                  <a class="nav-link" th:href="@{'/profilepage'}" th:text="${CURRENT_USER.full_name}"></a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" th:href="@{'/additem'}" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MODERATOR')" th:text="#{navbar.additem}"></a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="JavaScript:void(0)" onclick="logout()" th:text="#{navber.logout}"></a>
+                </li>
+                <script type="text/javascript">
+                    function logout(){
+                        document.getElementById("logoutFormId").submit();
+                    }
+                </script>
                 <form th:action="@{'/tologout'}" method="post" id="logoutFormId"></form>
             </ul>
 
             <ul class="navbar-nav me-auto mb-2 mb-lg-0" sec:authorize="isAnonymous()">
+                <div class="dropdown bg-light nav-item">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" th:text="#{menu.lang}">
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" th:href="@{'?lng=en'}">ENG</a></li>
+                        <li><a class="dropdown-item" th:href="@{'?lng=ru'}">РУС</a></li>
+                    </ul>
+                </div>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{'/'}" th:text="#{navbar.home}"></a>
                 </li>
@@ -38,14 +46,6 @@
                 <li class="navbar-item">
                     <a class="nav-link" th:href="@{'/registerpage'}" th:text="#{navbar.register}"></a>
                 </li>
-                <div class="dropdown bg-light nav-item">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" th:text="#{menu.lang}">
-                    </a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                            <li><a class="dropdown-item" th:href="@{'?lng=en'}">ENG</a></li>
-                            <li><a class="dropdown-item" th:href="@{'?lng=ru'}">РУС</a></li>
-                        </ul>
-                </div>
 
 <!--                <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">-->
 <!--                    <ul class="navbar-nav">-->
